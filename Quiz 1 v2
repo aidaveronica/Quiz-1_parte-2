@@ -1,0 +1,10 @@
+#Quiz 1 v2: Funciones y ciclos
+#Instrucciones: https://drive.google.com/file/d/1W6uK-GR0ZwYGO212iQW3tTrP35P_PJE3/view 
+
+rm(list = ls())
+
+#Funcion: 
+Quiebre <- function(modelo_base, D, a) {
+  
+}
+  
