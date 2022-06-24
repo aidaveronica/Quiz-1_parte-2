@@ -3,8 +3,84 @@
 
 rm(list = ls())
 
+
+#Inputs funcion: 
+N <- 1000
+X <- 50
+D <- 100 
+alfa <- 0.05
+
+#Otros parámetros
+a <- 10
+b <- 1
+beta <- 0.8
+T <- 600
+  
+
+  for (t in 2:(N)) {
+    
+    if (T<=t & t<=T+D) {
+      
+      X[t] <- a + b + beta*X[t-1]+rnorm(1)
+      
+    }
+    else {
+      
+      X[t] <- a + beta*X[t-1]+rnorm(1)
+      
+    }
+    
+  }
+
+plot(X,type="l")
+
 #Funcion: 
-Quiebre <- function(modelo_base, D, a) {
+Quiebre <- function(X, D, alfa){
+
+  X=X
+  D=100
+  alfa=0.05
+
+  N <- as.numeric(length(X)) 
+  extremo <- ceiling(N/5)   
+
+  
+  estadisticoF <- c()   
+  quiebre <- c()
+  
+  
+  X_b <- X[1:(N-1)]
+  Y_b <- X[2:N]
+  
+  reg_b <- lm(formula = Y_b ~ X_b)
+  
+  e_b<-reg_b$residuals
+  
+  SSE_b <- sum(e_b^2)
+  
+  for (i in extremo:(N-extremo)){
+    
+    I_t <- c(rep(0,i-1), rep(1,D+1), rep(0,N-i-D-1))
+    reg_a <- lm(formula = Y_b ~ I_t + X_b)
+    
+    e_a<-reg_a$residuals
+    
+    SSE_a <- sum(e_a^2)  
+    
+    F <- (SSE_b - SSE_a) / (SSE_a/(N-3))
+    
+    p_value<- pf(F, 3, 2, lower.tail = FALSE)
+    if (p_value<=alfa){
+      estadisticoF <- c(estadisticoF, F)
+      quiebre <-c(quiebre, i)
+    }
+  }
+  
+  i = which.max(estadisticoF)
+  quiebre_opt = quiebre[i]
+  
+  return(quiebre_opt)
   
 }
   
+Quiebre(X,100,0.05)
